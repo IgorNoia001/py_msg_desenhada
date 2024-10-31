@@ -258,8 +258,13 @@ def desenhar_mensagem(mensagem):
             "          ",
             "          ",
             "          "
-        ],
-        '@': [
+        ]
+    }
+
+    
+    # Mapeamento de caracteres especiais
+    caracteres_especiais = {
+        '$<3%': [
             "  ##    ##  ",
             " ####  #### ",
             "############",
@@ -267,19 +272,41 @@ def desenhar_mensagem(mensagem):
             "   ######   ",
             "    ####    ",
             "     ##     "
-        ]
-
+        ],
+        '$$%': [  # Novo caractere especial: cifrão
+            "   ######  ",
+            " ##  ##  ##",
+            " ##  ##    ",
+            "  #######  ",
+            "     ##  ## ",
+            " ##  ##  ##",
+            "   ######  "
+        ],
+        # Adicione mais caracteres especiais aqui
     }
 
     
     # Construção das linhas da mensagem
     for linha in range(altura_letra):
         linha_texto = ""
-        for char in mensagem.upper():
+        i = 0
+        while i < len(mensagem):
+            if mensagem[i] == '$':  # Verifica se o caractere de início de código está presente
+                # Procura pelo final do código
+                codigo_fim = mensagem.find('%', i)
+                if codigo_fim != -1:  # Se encontrou o final do código
+                    codigo = mensagem[i:codigo_fim + 1]
+                    if codigo in caracteres_especiais:
+                        linha_texto += caracteres_especiais[codigo][linha] + "  "  # Adiciona o caractere especial
+                        i = codigo_fim + 1  # Move o índice para depois do código
+                        continue
+            
+            char = mensagem[i].upper()
             if char in letras:
                 linha_texto += letras[char][linha] + "  "  # Espaço entre letras
             else:
                 linha_texto += "#" * largura_letra + "  "  # Caractere não mapeado
+            i += 1  # Avança para o próximo caractere
         linhas.append(linha_texto)
 
     # Determina o comprimento da linha mais longa
